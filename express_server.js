@@ -44,8 +44,8 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
-  
-  if (id) {
+
+  if (longURL) {
     res.redirect(longURL); // Redirect to the long URL if id-longURL pair exists in DB
   } else {
     res.status(404).send("URL not found");
