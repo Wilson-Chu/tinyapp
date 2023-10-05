@@ -41,9 +41,24 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+  
+  if (id) {
+    res.redirect(longURL); // Redirect to the long URL if id-longURL pair exists in DB
+  } else {
+    res.status(404).send("URL not found");
+  }
+});
+
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+
+  res.redirect(`/urls/${id}`);
+  // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
