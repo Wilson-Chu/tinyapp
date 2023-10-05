@@ -61,9 +61,9 @@ app.post("/urls", (req, res) => {
   // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
-app.post("/urls/:id/edit", (req, res) => {
+app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
-  const newLongURL = req.body.longURL;
+  const newLongURL = req.body.editURL;
 
   // Update the long URL in the urlDatabase
   urlDatabase[id] = newLongURL;
