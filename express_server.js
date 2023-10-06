@@ -1,4 +1,6 @@
 const express = require("express");
+const { authenticateUser, getUserByEmail, createUser } = require("./helpers");
+
 const cookieParser = require('cookie-parser');
 const app = express();
 
@@ -44,17 +46,17 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: { ...req.cookies.users } };
+  const templateVars = { urls: urlDatabase, user: req.cookies.user_id ? users[req.cookies.user_id] : null };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: { ...req.cookies.users } };
+  const templateVars = { urls: urlDatabase, user: req.cookies.user_id ? users[req.cookies.user_id] : null };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: { ...req.cookies.users } };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: req.cookies.user_id ? users[req.cookies.user_id] : null };
   res.render("urls_show", templateVars);
 });
 
@@ -71,6 +73,7 @@ app.get("/u/:id", (req, res) => {
 
 app.get("/register", (req, res) => {
   const templateVars = { email: req.body.email, password: req.body.password };
+
   res.render("register", templateVars);
 });
 
@@ -101,8 +104,9 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const userEmail = req.body.email;
-  res.cookie('email', userEmail);
+  // const userEmail = req.body.email;
+  // res.cookie('email', userEmail);
+  res.cookie("user_id", req.body.id);
 
   res.redirect('/urls');
 });
@@ -113,10 +117,22 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
+// I can definitely refactor to use helper functions, later...
 app.post('/register', (req, res) => {
   const id = generateRandomString();
-  users[id] = { id, ...req.body };
+  const newUser = { id, ...req.body };
 
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).send('Invalid information - please provide email or password');
+  }
+
+  for (const userId in users) {
+    if (users[userId].email === req.body.email) {
+      return res.status(400).send('User with this email already exists');
+    }
+  }
+
+  users[id] = newUser;
   res.cookie("user_id", id);
 
   console.log("NEW USER CREATED", users);
