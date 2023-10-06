@@ -56,6 +56,11 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+app.get("/register", (req, res) => {
+  const templateVars = { email: req.body.email, password: req.body.password };
+  res.render("register", templateVars);
+});
+
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const id = generateRandomString();
