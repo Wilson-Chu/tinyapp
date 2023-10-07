@@ -1,20 +1,21 @@
 const express = require("express");
 const { generateRandomString, authenticateUser, getUserByEmail, createUser } = require("./helpers");
 
+const morgan = require("morgan");
 const cookieSession = require('cookie-session');
 const app = express();
 
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
-app.use(cookieSession(
+
+app.use(morgan("dev")); // (req, res, next) => {}
+app.use(cookieSession({
   name: 'session',
-  keys: [],
+  keys: [generateRandomString(12)],
 
-  // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-
-));
+}));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -88,7 +89,7 @@ app.get("/login", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  const id = generateRandomString();
+  const id = generateRandomString(6);
   urlDatabase[id] = req.body.longURL;
 
   res.redirect(`/urls/${id}`);
