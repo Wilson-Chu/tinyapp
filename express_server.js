@@ -1,14 +1,12 @@
 const express = require("express");
-const { authenticateUser, getUserByEmail, createUser } = require("./helpers");
+const { generateRandomString, authenticateUser, getUserByEmail, createUser } = require("./helpers");
 
 const cookieParser = require('cookie-parser');
 const app = express();
 
 const PORT = 8080; // default port 8080
 
-const generateRandomString = function() {
-  return Math.random().toString(36).substring(2, 8);
-};
+
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -110,10 +108,6 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  // const userEmail = req.body.email;
-  // res.cookie('email', userEmail);
-  // res.cookie("user_id", req.body.id);
-  // res.redirect('/urls');
 
   const { email, password } = req.body;
 

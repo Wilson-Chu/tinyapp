@@ -1,3 +1,7 @@
+const generateRandomString = function() {
+  return Math.random().toString(36).substring(2, 8);
+};
+
 const getUserByEmail = (users, email) => {
   return users[email];
 };
@@ -32,4 +36,4 @@ const createUser = (users, newUserInfo) => {
   return { error: null, user: newUser };
 };
 
-module.exports = { getUserByEmail, authenticateUser, createUser };
+module.exports = { generateRandomString, getUserByEmail, authenticateUser, createUser };
