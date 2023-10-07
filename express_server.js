@@ -1,7 +1,7 @@
 const express = require("express");
 const { generateRandomString, authenticateUser, getUserByEmail, createUser } = require("./helpers");
 
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const app = express();
 
 const PORT = 8080; // default port 8080
