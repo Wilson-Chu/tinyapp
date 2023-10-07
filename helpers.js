@@ -2,8 +2,10 @@ const generateRandomString = function() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-const getUserByEmail = (users, email) => {
-  return users[email];
+const getUserByEmail = (email, database) => {
+  const user = database[database.id][email];
+
+  return user;
 };
 
 const authenticateUser = (users, email, password) => {
