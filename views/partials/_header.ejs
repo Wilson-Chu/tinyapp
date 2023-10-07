@@ -19,19 +19,24 @@
       </div>
     </div>
     <% console.log(user) %>
+    <div class="d-flex align-items-center">
       <% if (user) { %>
-        <form method="POST" action="/logout">
+        <form method="POST" action="/logout" class="mr-2">
           <label for="email"></label>
-          <h6>Logged in as: <%= user.email %>!  
+          <p class="mb-0">Logged in as: <%= user.email %>!  
             <button type="submit" class = "btn btn-outline-dark">Logout</button>
-          </h6>
+          </p>
         </form>
       <% } else { %>
-        <form method="POST" action="/login">
+        <form method="GET" action="/login">
           <label for="email"></label>
-          <input type="text" id="email" name="email" placeholder="Email" />
-          <button type="submit" class = "btn btn-outline-dark">Login</button>
+          <button type="submit" class = "btn btn-outline-dark" href="/login">Login</button>
         </form>
       <% } %>
+      <form method="GET" action="/register" class="mr-2">
+        <label for="register"></label>
+        <button type="submit" class = "btn btn-outline-dark" href="/register">Register</button>
+      </form>
+    </div>
   </nav>
 </header>
