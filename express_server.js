@@ -6,8 +6,6 @@ const app = express();
 
 const PORT = 8080; // default port 8080
 
-
-
 app.set("view engine", "ejs");
 app.use(cookieParser());
 
@@ -122,9 +120,9 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('email');
+  res.clearCookie('user_id');
 
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 // I can definitely refactor to use helper functions, later...
