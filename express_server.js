@@ -77,6 +77,12 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = { email: req.body.email, password: req.body.password };
+
+  res.render("login", templateVars);
+});
+
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const id = generateRandomString();
@@ -106,9 +112,19 @@ app.post('/urls/:id/delete', (req, res) => {
 app.post('/login', (req, res) => {
   // const userEmail = req.body.email;
   // res.cookie('email', userEmail);
-  res.cookie("user_id", req.body.id);
+  // res.cookie("user_id", req.body.id);
+  // res.redirect('/urls');
 
-  res.redirect('/urls');
+  const { email, password } = req.body;
+
+  const user = authenticateUser(users, email, password);
+
+  if (user) {
+    res.cookie("user_id", user.id);
+    res.redirect('/urls');
+  } else {
+    res.status(401).send('Authentication failed');
+  }
 });
 
 app.post('/logout', (req, res) => {

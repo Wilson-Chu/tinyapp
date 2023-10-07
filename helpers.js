@@ -3,17 +3,17 @@ const getUserByEmail = (users, email) => {
 };
 
 const authenticateUser = (users, email, password) => {
-  const user = getUserByEmail(users, email);
+  const user = users[email];
 
   if (!user) {
-    return { error: "No user found", user: null };
+    return false;
   }
 
   if (user.password !== password) {
-    return { error: "Password doesn't match", user: null };
+    return false;
   }
 
-  return { error: null, user };
+  return true;
 };
 
 const createUser = (users, newUserInfo) => {
