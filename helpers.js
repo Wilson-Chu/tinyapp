@@ -3,8 +3,13 @@ const generateRandomString = function(length) {
 };
 
 const getUserByEmail = (email, database) => {
-  const user = database[database.id][email];
+  let user;
 
+  for (const userId in database) {
+    if (database[userId].email === email) {
+      user = database[userId].id;
+    }
+  }
   return user;
 };
 

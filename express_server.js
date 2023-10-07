@@ -8,12 +8,11 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
-
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); // (req, res, next) => {}
 app.use(cookieSession({
   name: 'session',
   keys: [generateRandomString(12)],
-
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
@@ -35,10 +34,11 @@ const users = {
   },
 };
 
-app.use(express.urlencoded({ extended: true }));
-
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  }
+  res.redirect("/login");
 });
 
 app.get("/urls.json", (req, res) => {
