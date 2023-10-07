@@ -7,7 +7,14 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
-app.use(cookieParser());
+app.use(cookieSession(
+  name: 'session',
+  keys: [],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+
+));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -42,17 +49,17 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: req.cookies.user_id ? users[req.cookies.user_id] : null };
+  const templateVars = { urls: urlDatabase, user: req.session.user_id ? users[req.session.user_id] : null };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: req.cookies.user_id ? users[req.cookies.user_id] : null };
+  const templateVars = { urls: urlDatabase, user: req.session.user_id ? users[req.session.user_id] : null };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: req.cookies.user_id ? users[req.cookies.user_id] : null };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: req.session.user_id ? users[req.session.user_id] : null };
   res.render("urls_show", templateVars);
 });
 
@@ -112,7 +119,7 @@ app.post('/login', (req, res) => {
   const user = authenticateUser(users, email, password);
 
   if (user) {
-    res.cookie("user_id", user.id);
+    res.session("user_id", user.id);
     res.redirect('/urls');
   } else {
     res.status(401).send('Authentication failed');
@@ -120,7 +127,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  res.clearsession('user_id');
 
   res.redirect('/login');
 });
@@ -141,7 +148,7 @@ app.post('/register', (req, res) => {
   }
 
   users[id] = newUser;
-  res.cookie("user_id", id);
+  res.session("user_id", id);
 
   console.log("NEW USER CREATED", users);
 
