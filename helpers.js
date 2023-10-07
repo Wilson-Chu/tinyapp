@@ -5,11 +5,7 @@ const getUserByEmail = (users, email) => {
 const authenticateUser = (users, email, password) => {
   const user = users[email];
 
-  if (!user) {
-    return false;
-  }
-
-  if (user.password !== password) {
+  if (!user || user.password !== password) {
     return false;
   }
 
