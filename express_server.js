@@ -42,7 +42,7 @@ const users = {
 
 app.get("/", (req, res) => {
   if (req.session.user_id) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
   res.redirect("/login");
 });
@@ -71,7 +71,7 @@ app.get("/urls/new", (req, res) => {
 
   // If not logged in
   if (Object.keys(req.session).length === 0) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
   res.render("urls_new", templateVars);
@@ -89,7 +89,7 @@ app.get("/urls/:id", (req, res) => {
         user: authenticateUser(req.session.user_id, users),
       };
 
-      res.render("urls_show", templateVars);
+      return res.render("urls_show", templateVars);
     }
   }
 
@@ -109,7 +109,7 @@ app.get("/u/:id", (req, res) => {
   for (const linkId in urlDatabase) {
     if (id === linkId) {
       const longURL = urlDatabase[id];
-      res.redirect(longURL); // Redirect to the long URL if id-longURL pair exists in DB
+      return res.redirect(longURL); // Redirect to the long URL if id-longURL pair exists in DB
     }
   }
 
@@ -120,7 +120,7 @@ app.get("/register", (req, res) => {
   const templateVars = { user: authenticateUser(req.session.user_id, users) };
 
   if (Object.keys(req.session).length !== 0) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
 
   res.render("register", templateVars);
@@ -130,7 +130,7 @@ app.get("/login", (req, res) => {
   const templateVars = { user: authenticateUser(req.session.user_id, users) };
 
   if (Object.keys(req.session).length !== 0) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
 
   res.render("login", templateVars);
@@ -138,6 +138,7 @@ app.get("/login", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console (temp. testing...)
+  
   const id = generateRandomString(6);
   urlDatabase[id] = req.body.longURL;
 
