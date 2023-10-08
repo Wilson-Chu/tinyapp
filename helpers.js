@@ -12,7 +12,7 @@ const getUserByEmail = (email, database) => {
     }
   }
 
-  return user;
+  return user; // undefined, if no email found
 };
 
 const authenticateUser = (id, database) => {
