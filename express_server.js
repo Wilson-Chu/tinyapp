@@ -138,9 +138,18 @@ app.get("/login", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console (temp. testing...)
-  
+
   const id = generateRandomString(6);
-  urlDatabase[id] = req.body.longURL;
+  const longURL = req.body.longURL;
+
+  if (Object.keys(req.session).length === 0) {
+    return res.redirect("/login");
+  }
+
+  urlDatabase[id] = {
+    longURL: longURL,
+    userID: req.session.user_id,
+  };
 
   res.redirect(`/urls/${id}`);
 });
