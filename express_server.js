@@ -63,6 +63,7 @@ app.get("/urls/new", (req, res) => {
     user: authenticateUser(req.session.user_id, users),
   };
 
+  // If not logged in
   if (Object.keys(req.session).length === 0) {
     res.redirect("/login");
   }
@@ -71,7 +72,28 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: req.session.user_id ? users[req.session.user_id] : null };
+  const userLinks = urlsForUser(req.session.user_id, urlDatabase);
+  const idArr = Object.keys(userLinks);
+
+  for (let linkId of idArr) {
+    if (req.params.id === linkId) {
+      const templateVars = {
+        id: req.params.id,
+        longURL: urlDatabase[req.params.id].longURL,
+        user: authenticateUser(req.session.user_id, users),
+      };
+
+      res.render("urls_show", templateVars);
+    }
+  }
+
+  const templateVars = {
+    id: req.params.id,
+    user: authenticateUser(req.session.user_id, users),
+  };
+
+  res.status(403).send("URL not found");
+
   res.render("urls_show", templateVars);
 });
 
