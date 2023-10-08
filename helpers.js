@@ -29,12 +29,11 @@ const authenticateUser = (id, database) => {
 };
 
 const urlsForUser = (id, urlDatabase) => {
-  const urlArr = Object.keys(urlDatabase);
   const filteredUrls = {};
 
-  for (const shortUrl of urlArr) {
-    if (urlDatabase[shortUrl].userID === id) {
-      filteredUrls[shortUrl] = urlDatabase[shortUrl];
+  for (const [shortUrl, urlData] of Object.entries(urlDatabase)) {
+    if (urlData.userID === id) {
+      filteredUrls[shortUrl] = urlData;
     }
   }
 

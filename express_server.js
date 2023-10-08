@@ -18,11 +18,11 @@ app.use(cookieSession({
 let urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    user_id: "user1RandomID"
+    userID: "user1RandomID"
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
-    user_id: "user2RandomID"
+    userID: "user2RandomID"
   }
 };
 
