@@ -50,7 +50,10 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: req.session.user_id ? users[req.session.user_id] : null };
+  const templateVars = {
+    urls: urlsForUser(req.session.user_id, urlDatabase),
+    user: authenticateUser(req.session.userId, users),
+  };
   res.render("urls_index", templateVars);
 });
 
