@@ -98,7 +98,7 @@ app.get("/urls/:id", (req, res) => {
     user: authenticateUser(req.session.user_id, users),
   };
 
-  res.status(403).send("URL not found");
+  res.status(403).send("URL not found.");
 
   res.render("urls_show", templateVars);
 });
@@ -113,7 +113,7 @@ app.get("/u/:id", (req, res) => {
     }
   }
 
-  res.status(404).send("URL not found");
+  res.status(404).send("URL not found.");
 });
 
 app.get("/register", (req, res) => {
@@ -155,13 +155,23 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
+  if (Object.keys(req.session).length === 0) {
+    return res.status(403).send(`Login to edit the URL.`);
+  }
+
   const id = req.params.id;
-  const newLongURL = req.body.editURL; // From urls_show.ejs
+  const userLinks = urlsForUser(req.session.user_id, urlDatabase);
 
-  // Update the long URL in the urlDatabase
-  urlDatabase[id] = newLongURL;
+  if (userLinks[id].userID === req.session.user_id) {
+    const newLongURL = req.body.editURL; // From urls_show.ejs
 
-  res.redirect(`/urls`);
+    // Update the long URL in the urlDatabase
+    urlDatabase[id].longURL = newLongURL;
+
+    return res.redirect("/urls");
+  }
+
+  res.status(403).send(`Invalid account. Please login to edit the URL.`);
 });
 
 app.post('/urls/:id/delete', (req, res) => {
