@@ -110,6 +110,7 @@ app.get("/u/:id", (req, res) => {
   res.status(404).send("URL not found");
 });
 
+// GOING FOR DINNER - WILL GET TO THIS LATER! **************
 app.get("/register", (req, res) => {
   const templateVars = { email: req.body.email, password: req.body.password };
 
@@ -123,12 +124,11 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
+  console.log(req.body); // Log the POST request body to the console (temp. testing...)
   const id = generateRandomString(6);
   urlDatabase[id] = req.body.longURL;
 
   res.redirect(`/urls/${id}`);
-  // res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -170,7 +170,7 @@ app.post('/logout', (req, res) => {
 
 // I can definitely refactor to use helper functions, later...
 app.post('/register', (req, res) => {
-  const id = generateRandomString();
+  const id = generateRandomString(6);
   const newUser = { id, ...req.body };
 
   if (!req.body.email || !req.body.password) {
