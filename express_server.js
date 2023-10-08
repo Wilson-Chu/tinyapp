@@ -173,7 +173,11 @@ app.post("/urls/:id", (req, res) => {
   const userLinks = urlsForUser(req.session.user_id, urlDatabase);
 
   if (userLinks[id].userID === req.session.user_id) {
-    const newLongURL = req.body.longURL; // From urls_show.ejs
+    let newLongURL = req.body.longURL; // From urls_show.ejs
+
+    if (!(newLongURL.includes("http://") || newLongURL.includes("https://"))) {
+      newLongURL = "https://" + newLongURL;
+    }
 
     // Update the long URL in the urlDatabase
     urlDatabase[id].longURL = newLongURL;
@@ -185,12 +189,11 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  const id = req.params.id;
-
   if (Object.keys(req.session).length === 0) {
     return res.status(403).send(`Login to delete the URL.`);
   }
 
+  const id = req.params.id;
   const userLinks = urlsForUser(req.session.user_id, urlDatabase);
 
   if (userLinks[id].userID === req.session.user_id) {
@@ -227,18 +230,6 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Invalid information - please provide email or password');
   }
-
-  // if (getUserByEmail(email, users)) {
-  //   users[randomUserId] = {
-  //     id: randomUserId,
-  //     email: email,
-  //     password: bcrypt.hashSync(password, 10),
-  //   };
-
-  //   req.session.user_id = randomUserId;
-  // } else {
-  //   return res.status(400).send("Email already taken. Please try another one.");
-  // }
 
   if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already taken. Please try another one.");

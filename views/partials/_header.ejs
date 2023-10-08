@@ -20,11 +20,12 @@
     </div>
     <div class="d-flex align-items-center">
       <% if (user) { %>
-        <form method="POST" action="/logout" class="mr-2">
+        <form method="POST" action="/logout">
           <label for="email"></label>
-          <p class="mb-0">Logged in as: <%= user.email %>!  
+          <div class="d-flex align-items-center">
+            <p class="mb-0 mr-2">Logged in as: <%= user.email %>!  </p>  
             <button type="submit" class = "btn btn-outline-dark">Logout</button>
-          </p>
+          </div>
         </form>
       <% } else { %>
         <form method="GET" action="/login">
