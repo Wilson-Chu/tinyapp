@@ -54,11 +54,19 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_id, urlDatabase),
     user: authenticateUser(req.session.userId, users),
   };
+
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: req.session.user_id ? users[req.session.user_id] : null };
+  const templateVars = {
+    user: authenticateUser(req.session.user_id, users),
+  };
+
+  if (Object.keys(req.session).length === 0) {
+    res.redirect("/login");
+  }
+
   res.render("urls_new", templateVars);
 });
 
