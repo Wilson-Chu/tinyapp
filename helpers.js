@@ -14,14 +14,16 @@ const getUserByEmail = (email, database) => {
   return user;
 };
 
-const authenticateUser = (users, email, password) => {
-  const user = users[email];
+const authenticateUser = (id, database) => {
+  let userID;
 
-  if (!user || user.password !== password) {
-    return false;
+  for (const userId in database) {
+    if (userId === id) {
+      userID = database[id];
+    }
   }
 
-  return true;
+  return userID;
 };
 
 const urlsForUser = (id, urlDatabase) => {
