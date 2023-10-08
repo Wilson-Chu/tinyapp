@@ -117,10 +117,6 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  // const templateVars = { email: req.body.email, password: req.body.password };
-
-  // res.render("register", templateVars);
-
   const templateVars = { user: authenticateUser(req.session.user_id, users) };
 
   if (Object.keys(req.session).length !== 0) {
@@ -131,7 +127,11 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { email: req.body.email, password: req.body.password };
+  const templateVars = { user: authenticateUser(req.session.user_id, users) };
+
+  if (Object.keys(req.session).length !== 0) {
+    res.redirect("/urls");
+  }
 
   res.render("login", templateVars);
 });
