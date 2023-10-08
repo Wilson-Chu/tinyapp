@@ -15,7 +15,7 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-const urlDatabase = {
+let urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     user_id: "user1RandomID"
@@ -40,10 +40,6 @@ const users = {
 };
 
 app.get("/", (req, res) => {
-  // if (req.session.user_id) {
-  //   return res.redirect("/urls");
-  // }
-  // res.redirect("/login");
   return res.redirect("/urls");
 });
 
@@ -61,9 +57,9 @@ app.get("/urls", (req, res) => {
     user: authenticateUser(req.session.user_id, users),
   };
 
-  // if (!req.session.user_id) { // Check if user is not logged in
-  //   return res.redirect("/login");
-  // }
+  if (!req.session.user_id) { // Check if user is not logged in
+    return res.redirect("/login");
+  }
 
   res.render("urls_index", templateVars);
 });
@@ -74,13 +70,9 @@ app.get("/urls/new", (req, res) => {
   };
 
   // If not logged in
-  if (Object.keys(req.session).length === 0) {
+  if (!req.session.user_id) {
     return res.redirect("/login");
   }
-
-  // if (!req.session.user_id) { // Check if user is not logged in
-  //   return res.redirect("/login");
-  // }
 
   res.render("urls_new", templateVars);
 });
@@ -127,7 +119,7 @@ app.get("/u/:id", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { user: authenticateUser(req.session.user_id, users) };
 
-  if (Object.keys(req.session).length !== 0) {
+  if (req.session.user_id) {
     return res.redirect("/urls");
   }
 
@@ -137,7 +129,7 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = { user: authenticateUser(req.session.user_id, users) };
 
-  if (Object.keys(req.session).length !== 0) {
+  if (req.session.user_id) {
     return res.redirect("/urls");
   }
 
@@ -145,7 +137,7 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  if (Object.keys(req.session).length === 0) {
+  if (!req.session.user_id) {
     return res.redirect("/login");
   }
 
@@ -165,7 +157,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  if (Object.keys(req.session).length === 0) {
+  if (!req.session.user_id) {
     return res.status(403).send("Login to edit the URL.");
   }
 
@@ -189,7 +181,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  if (Object.keys(req.session).length === 0) {
+  if (!req.session.user_id) {
     return res.status(403).send(`Login to delete the URL.`);
   }
 
