@@ -18,11 +18,11 @@ app.use(cookieSession({
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    userId: "user1RandomID"
+    user_id: "user1RandomID"
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
-    userId: "user2RandomID"
+    user_id: "user2RandomID"
   }
 };
 
@@ -144,12 +144,12 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const id = generateRandomString(6);
-  const longURL = req.body.longURL;
-
   if (Object.keys(req.session).length === 0) {
     return res.redirect("/login");
   }
+
+  const id = generateRandomString(6);
+  const longURL = req.body.longURL;
 
   urlDatabase[id] = {
     longURL: longURL,
