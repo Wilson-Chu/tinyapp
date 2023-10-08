@@ -116,9 +116,16 @@ app.get("/u/:id", (req, res) => {
   res.status(404).send("URL not found");
 });
 
-// GOING FOR DINNER - WILL GET TO THIS LATER! **************
 app.get("/register", (req, res) => {
-  const templateVars = { email: req.body.email, password: req.body.password };
+  // const templateVars = { email: req.body.email, password: req.body.password };
+
+  // res.render("register", templateVars);
+
+  const templateVars = { user: authenticateUser(req.session.user_id, users) };
+
+  if (Object.keys(req.session).length !== 0) {
+    res.redirect("/urls");
+  }
 
   res.render("register", templateVars);
 });
