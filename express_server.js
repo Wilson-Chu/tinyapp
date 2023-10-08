@@ -3,6 +3,7 @@ const { generateRandomString, authenticateUser, getUserByEmail, urlsForUser } = 
 
 const morgan = require("morgan");
 const cookieSession = require('cookie-session');
+const bcrypt = require("bcryptjs");
 const app = express();
 
 const PORT = 8080; // default port 8080
@@ -175,10 +176,6 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  // 
-  // delete urlDatabase[id];
-
-  // res.redirect('/urls');
   const id = req.params.id;
 
   if (Object.keys(req.session).length === 0) {
@@ -196,17 +193,17 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-
   const { email, password } = req.body;
-
-  const user = authenticateUser(users, email, password);
+  const user = getUserByEmail(email, users);
 
   if (user) {
-    res.session("user_id", user.id);
-    res.redirect('/urls');
-  } else {
-    res.status(401).send('Authentication failed');
+    if (bcrypt.compareSync(password, user.password)) {
+      req.session.user_id = user.id;
+      return res.redirect("/urls");
+    }
   }
+
+  res.status(401).send("Authentication failed. Invalid Email/Password.");
 });
 
 app.post('/logout', (req, res) => {
@@ -215,27 +212,47 @@ app.post('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-// I can definitely refactor to use helper functions, later...
 app.post('/register', (req, res) => {
-  const id = generateRandomString(6);
-  const newUser = { id, ...req.body };
+  // const id = generateRandomString(6);
+  // const newUser = { id, ...req.body };
 
-  if (!req.body.email || !req.body.password) {
+  // if (!req.body.email || !req.body.password) {
+  //   return res.status(400).send('Invalid information - please provide email or password');
+  // }
+
+  // for (const userId in users) {
+  //   if (users[userId].email === req.body.email) {
+  //     return res.status(400).send('User with this email already exists');
+  //   }
+  // }
+
+  // users[id] = newUser;
+  // res.session("user_id", id);
+
+  // console.log("NEW USER CREATED", users);
+
+  // res.redirect('/urls');
+
+  const {email, password} = req.body;
+  const randomUserId = generateRandomString(6);
+
+  if (!email || !password) {
     return res.status(400).send('Invalid information - please provide email or password');
   }
 
-  for (const userId in users) {
-    if (users[userId].email === req.body.email) {
-      return res.status(400).send('User with this email already exists');
-    }
+  if (getUserByEmail(email, users)) {
+    users[randomUserId] = {
+      id: randomUserId,
+      email: email,
+      password: bcrypt.hashSync(password, 10),
+    };
+
+    req.session.user_id = randomUserId;
+  } else {
+    return res.status(400).send("Email already taken. Please try another one.");
   }
 
-  users[id] = newUser;
-  res.session("user_id", id);
-
-  console.log("NEW USER CREATED", users);
-
-  res.redirect('/urls');
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
