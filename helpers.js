@@ -7,7 +7,8 @@ const getUserByEmail = (email, database) => {
 
   for (const userId in database) {
     if (database[userId].email === email) {
-      user = database[userId].id;
+      user = database[userId];
+      break;
     }
   }
   return user;

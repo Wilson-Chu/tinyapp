@@ -19,7 +19,7 @@ describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = getUserByEmail("user@example.com", testUsers);
     const expectedUserID = "userRandomID";
-    assert.equal(user, expectedUserID);
+    assert.equal(user.id, expectedUserID);
   });
   it('should return undefined with invalid email', function() {
     const user = getUserByEmail("notUser@example.com", testUsers);
