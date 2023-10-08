@@ -58,7 +58,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlsForUser(req.session.user_id, urlDatabase),
-    user: authenticateUser(req.session.userId, users),
+    user: authenticateUser(req.session.user_id, users),
   };
 
   // if (!req.session.user_id) { // Check if user is not logged in
