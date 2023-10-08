@@ -1,5 +1,5 @@
 const express = require("express");
-const { generateRandomString, authenticateUser, getUserByEmail, urlsForUser } = require("./helpers");
+const { generateRandomString, authenticateUser, getUserByEmail, urlsForUser, isValidURL } = require("./helpers");
 
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
@@ -144,7 +144,7 @@ app.post("/urls", (req, res) => {
   const id = generateRandomString(6);
   let longURL = req.body.longURL;
 
-  if (!(longURL.includes("http://") || longURL.includes("https://"))) {
+  if (!isValidURL(longURL)) {
     longURL = "https://" + longURL;
   }
 
@@ -167,7 +167,7 @@ app.post("/urls/:id", (req, res) => {
   if (userLinks[id].userID === req.session.user_id) {
     let newLongURL = req.body.longURL; // From urls_show.ejs
 
-    if (!(newLongURL.includes("http://") || newLongURL.includes("https://"))) {
+    if (!isValidURL(newLongURL)) {
       newLongURL = "https://" + newLongURL;
     }
 

@@ -1,4 +1,4 @@
-const generateRandomString = function(length) {
+const generateRandomString = (length) => {
   return Math.random().toString(36).substring(2, 2 + length);
 };
 
@@ -41,4 +41,8 @@ const urlsForUser = (id, urlDatabase) => {
   return filteredUrls;
 };
 
-module.exports = { generateRandomString, getUserByEmail, authenticateUser, urlsForUser };
+const isValidURL = (url) => {
+  return (url.includes("http://") || url.includes("https://"));
+};
+
+module.exports = { generateRandomString, getUserByEmail, authenticateUser, urlsForUser, isValidURL };
