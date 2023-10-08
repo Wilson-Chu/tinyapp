@@ -35,7 +35,6 @@ const urlsForUser = (id, urlDatabase) => {
   for (const shortUrl of urlArr) {
     if (urlDatabase[shortUrl].userID === id) {
       filteredUrls[shortUrl] = urlDatabase[shortUrl];
-      break;
     }
   }
 
