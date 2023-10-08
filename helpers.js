@@ -24,24 +24,17 @@ const authenticateUser = (users, email, password) => {
   return true;
 };
 
-const createUser = (users, newUserInfo) => {
-  if (users[newUserInfo.email]) {
-    return { error: "User already exists", user: null };
+const urlsForUser = (id, urlDatabase) => {
+  const urlArr = Object.keys(urlDatabase);
+  const filteredUrls = {};
+
+  for (const shortUrl of urlArr) {
+    if (urlDatabase[shortUrl].userID === id) {
+      filteredUrls[shortUrl] = urlDatabase[shortUrl];
+    }
   }
 
-  const newId = Object.values(users).length + 1;
-
-  // const newUser = {id:newId}
-  // newUser.name = newUserInfo.name
-  // newUser.email = newUserInfo.email
-  // newUser.password = newUserInfo.password
-  // newUser.imagePath = newUserInfo.imagePath
-
-  const newUser = { id: newId, ...newUserInfo };
-
-  users[newUser.email] = newUser;
-
-  return { error: null, user: newUser };
+  return filteredUrls;
 };
 
-module.exports = { generateRandomString, getUserByEmail, authenticateUser, createUser };
+module.exports = { generateRandomString, getUserByEmail, authenticateUser, urlsForUser };
