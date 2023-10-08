@@ -17,8 +17,14 @@ app.use(cookieSession({
 }));
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userId: "user1RandomID"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userId: "user2RandomID"
+  }
 };
 
 const users = {
