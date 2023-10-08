@@ -156,7 +156,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   if (Object.keys(req.session).length === 0) {
-    return res.status(403).send(`Login to edit the URL.`);
+    return res.status(403).send("Login to edit the URL.");
   }
 
   const id = req.params.id;
@@ -171,14 +171,28 @@ app.post("/urls/:id", (req, res) => {
     return res.redirect("/urls");
   }
 
-  res.status(403).send(`Invalid account. Please login to edit the URL.`);
+  res.status(403).send("Invalid account. Please login to edit the URL.");
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  const id = req.params.id;
-  delete urlDatabase[id];
+  // 
+  // delete urlDatabase[id];
 
-  res.redirect('/urls');
+  // res.redirect('/urls');
+  const id = req.params.id;
+
+  if (Object.keys(req.session).length === 0) {
+    return res.status(403).send(`Login to delete the URL.`);
+  }
+
+  const userLinks = urlsForUser(req.session.user_id, urlDatabase);
+
+  if (userLinks[id].userID === req.session.user_id) {
+    delete urlDatabase[id];
+    return res.redirect("/urls");
+  }
+
+  res.status(403).send("Invalid account. Please login to edit the URL.");
 });
 
 app.post('/login', (req, res) => {
