@@ -40,10 +40,11 @@ const users = {
 };
 
 app.get("/", (req, res) => {
-  if (req.session.user_id) {
-    return res.redirect("/urls");
-  }
-  res.redirect("/login");
+  // if (req.session.user_id) {
+  //   return res.redirect("/urls");
+  // }
+  // res.redirect("/login");
+  return res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -60,9 +61,9 @@ app.get("/urls", (req, res) => {
     user: authenticateUser(req.session.userId, users),
   };
 
-  if (!req.session.user_id) { // Check if user is not logged in
-    return res.redirect("/login");
-  }
+  // if (!req.session.user_id) { // Check if user is not logged in
+  //   return res.redirect("/login");
+  // }
 
   res.render("urls_index", templateVars);
 });
@@ -73,13 +74,13 @@ app.get("/urls/new", (req, res) => {
   };
 
   // If not logged in
-  // if (Object.keys(req.session).length === 0) {
-  //   return res.redirect("/login");
-  // }
-
-  if (!req.session.user_id) { // Check if user is not logged in
+  if (Object.keys(req.session).length === 0) {
     return res.redirect("/login");
   }
+
+  // if (!req.session.user_id) { // Check if user is not logged in
+  //   return res.redirect("/login");
+  // }
 
   res.render("urls_new", templateVars);
 });
@@ -88,11 +89,11 @@ app.get("/urls/:id", (req, res) => {
   const userLinks = urlsForUser(req.session.user_id, urlDatabase);
   const idArr = Object.keys(userLinks);
 
-  for (let linkId of idArr) {
+  for (const linkId of idArr) {
     if (req.params.id === linkId) {
       const templateVars = {
         id: req.params.id,
-        longURL: urlDatabase[req.params.id].longURL,
+        longURL: urlDatabase[req.params.id].longURL, // Edited longURL in urls_show.ejs
         user: authenticateUser(req.session.user_id, users),
       };
 
@@ -115,7 +116,7 @@ app.get("/u/:id", (req, res) => {
 
   for (const linkId in urlDatabase) {
     if (id === linkId) {
-      const longURL = urlDatabase[id];
+      const longURL = urlDatabase[id].longURL;
       return res.redirect(longURL); // Redirect to the long URL if id-longURL pair exists in DB
     }
   }
@@ -149,7 +150,11 @@ app.post("/urls", (req, res) => {
   }
 
   const id = generateRandomString(6);
-  const longURL = req.body.longURL;
+  let longURL = req.body.longURL;
+
+  if (!(longURL.includes("http://") || longURL.includes("https://"))) {
+    longURL = "https://" + longURL;
+  }
 
   urlDatabase[id] = {
     longURL: longURL,
@@ -168,7 +173,7 @@ app.post("/urls/:id", (req, res) => {
   const userLinks = urlsForUser(req.session.user_id, urlDatabase);
 
   if (userLinks[id].userID === req.session.user_id) {
-    const newLongURL = req.body.editURL; // From urls_show.ejs
+    const newLongURL = req.body.longURL; // From urls_show.ejs
 
     // Update the long URL in the urlDatabase
     urlDatabase[id].longURL = newLongURL;
