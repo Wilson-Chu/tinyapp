@@ -11,6 +11,7 @@ const getUserByEmail = (email, database) => {
       break;
     }
   }
+
   return user;
 };
 
@@ -20,6 +21,7 @@ const authenticateUser = (id, database) => {
   for (const userId in database) {
     if (userId === id) {
       userID = database[id];
+      break;
     }
   }
 
@@ -33,6 +35,7 @@ const urlsForUser = (id, urlDatabase) => {
   for (const shortUrl of urlArr) {
     if (urlDatabase[shortUrl].userID === id) {
       filteredUrls[shortUrl] = urlDatabase[shortUrl];
+      break;
     }
   }
 
