@@ -1,7 +1,6 @@
 const express = require("express");
 const { generateRandomString, authenticateUser, getUserByEmail, urlsForUser } = require("./helpers");
 
-const morgan = require("morgan");
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const app = express();
@@ -10,7 +9,6 @@ const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev")); // (req, res, next) => {}
 app.use(cookieSession({
   name: 'session',
   keys: [generateRandomString(12)],
@@ -62,6 +60,10 @@ app.get("/urls", (req, res) => {
     user: authenticateUser(req.session.userId, users),
   };
 
+  if (!req.session.user_id) { // Check if user is not logged in
+    return res.redirect("/login");
+  }
+
   res.render("urls_index", templateVars);
 });
 
@@ -71,7 +73,11 @@ app.get("/urls/new", (req, res) => {
   };
 
   // If not logged in
-  if (Object.keys(req.session).length === 0) {
+  // if (Object.keys(req.session).length === 0) {
+  //   return res.redirect("/login");
+  // }
+
+  if (!req.session.user_id) { // Check if user is not logged in
     return res.redirect("/login");
   }
 
@@ -138,8 +144,6 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console (temp. testing...)
-
   const id = generateRandomString(6);
   const longURL = req.body.longURL;
 
@@ -207,50 +211,42 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearsession('user_id');
+  delete req.session.user_id;
 
   res.redirect('/login');
 });
 
 app.post('/register', (req, res) => {
-  // const id = generateRandomString(6);
-  // const newUser = { id, ...req.body };
-
-  // if (!req.body.email || !req.body.password) {
-  //   return res.status(400).send('Invalid information - please provide email or password');
-  // }
-
-  // for (const userId in users) {
-  //   if (users[userId].email === req.body.email) {
-  //     return res.status(400).send('User with this email already exists');
-  //   }
-  // }
-
-  // users[id] = newUser;
-  // res.session("user_id", id);
-
-  // console.log("NEW USER CREATED", users);
-
-  // res.redirect('/urls');
-
-  const {email, password} = req.body;
-  const randomUserId = generateRandomString(6);
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).send('Invalid information - please provide email or password');
   }
 
-  if (getUserByEmail(email, users)) {
-    users[randomUserId] = {
-      id: randomUserId,
-      email: email,
-      password: bcrypt.hashSync(password, 10),
-    };
+  // if (getUserByEmail(email, users)) {
+  //   users[randomUserId] = {
+  //     id: randomUserId,
+  //     email: email,
+  //     password: bcrypt.hashSync(password, 10),
+  //   };
 
-    req.session.user_id = randomUserId;
-  } else {
+  //   req.session.user_id = randomUserId;
+  // } else {
+  //   return res.status(400).send("Email already taken. Please try another one.");
+  // }
+
+  if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already taken. Please try another one.");
   }
+
+  const randomUserId = generateRandomString(6);
+  users[randomUserId] = {
+    id: randomUserId,
+    email: email,
+    password: bcrypt.hashSync(password, 10),
+  };
+
+  req.session.user_id = randomUserId;
 
   res.redirect("/urls");
 });

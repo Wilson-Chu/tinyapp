@@ -6,7 +6,7 @@ const getUserByEmail = (email, database) => {
   let user;
 
   for (const userId in database) {
-    if (database[userId].email === email) {
+    if (database[userId].email === email) { // Found existing user
       user = database[userId];
       break;
     }
